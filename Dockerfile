@@ -2,7 +2,6 @@ FROM --platform=linux/amd64 ubuntu:22.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-
 RUN apt update -y && apt install -y software-properties-common && \
     add-apt-repository ppa:deadsnakes/ppa -y && \
     apt update -y && apt install -y \
@@ -21,10 +20,8 @@ RUN apt update -y && apt install -y software-properties-common && \
     build-essential \
     && rm -rf /var/lib/apt/lists/*
 
-
 RUN curl -sS https://bootstrap.pypa.io/get-pip.py | python3.11 && \
     python3.11 -m pip install --upgrade pip setuptools wheel
-
 
 RUN python3.11 -m pip install --no-cache-dir \
     mtranslate \
@@ -48,13 +45,14 @@ RUN python3.11 -m pip install --no-cache-dir \
     gpytranslate \
     watchdog
 
+WORKDIR /root/pro
 
-WORKDIR /root
-RUN git clone https://github.com/2mrxe2/pro
-
+COPY . .
 
 RUN mkdir /var/run/sshd
-RUN echo "root:final1997@@@" | chpasswd
+
+RUN echo "Dex:echo77" | chpasswd
+
 RUN sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
 
 EXPOSE 22
