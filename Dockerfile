@@ -51,9 +51,11 @@ COPY . .
 
 RUN mkdir /var/run/sshd
 
-RUN echo "Dex:echo77" | chpasswd
+RUN useradd -m Dex && \
+    echo 'Dex:echo77' | chpasswd || true
 
-RUN sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
+RUN sed -i 's/#PasswordAuthentication yes/PasswordAuthentication yes/' /etc/ssh/sshd_config || true
+RUN sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config || true
 
 EXPOSE 22
 
