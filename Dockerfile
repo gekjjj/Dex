@@ -2,9 +2,8 @@ FROM --platform=linux/amd64 ubuntu:22.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-RUN apt update -y && apt install -y software-properties-common && \
-    add-apt-repository ppa:deadsnakes/ppa -y && \
-    apt update -y && apt install -y \
+# تثبيت التحديثات وأدوات الشبكة والـ SSH فقط
+RUN apt update -y && apt install -y \
     openssh-server \
     sudo \
     vim \
@@ -13,48 +12,22 @@ RUN apt update -y && apt install -y software-properties-common && \
     wget \
     git \
     tzdata \
-    ffmpeg \
-    python3.11 \
-    python3.11-dev \
-    python3.11-distutils \
-    build-essential \
     && rm -rf /var/lib/apt/lists/*
 
-RUN curl -sS https://bootstrap.pypa.io/get-pip.py | python3.11 && \
-    python3.11 -m pip install --upgrade pip setuptools wheel
-
-RUN python3.11 -m pip install --no-cache-dir \
-    mtranslate \
-    google-genai \
-    requests \
-    g4f \
-    mutagen \
-    tgcalls==3.0.0.dev6 \
-    git+https://github.com/pytgcalls/pytgcalls.git@dev \
-    telethon \
-    aiocron \
-    emoji \
-    pytz \
-    gtts \
-    qrcode \
-    Telegram \
-    aiohttp \
-    fake_useragent \
-    user_agent \
-    hijri_converter \
-    gpytranslate \
-    watchdog
-
+# إعداد مجلد العمل (اختياري ولكنه يحافظ على نفس المسار السابق)
 WORKDIR /root/pro
 
-COPY . .
-
+# إعدادات تشغيل سيرفر SSH والـ Root
 RUN mkdir /var/run/sshd
 
+# تغيير كلمة المرور الخاصة بالـ root (تأكد من تغييرها لاحقاً لأمان سيرفرك)
 RUN echo "root:echo77" | chpasswd
 
+# السماح بدخول الـ Root عبر SSH
 RUN sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
 
+# فتح المنفذ 22
 EXPOSE 22
 
+# تشغيل سيرفر SSH
 CMD ["/usr/sbin/sshd", "-D"]
